@@ -10,23 +10,53 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
-const imageSource = "/textures/door/color.jpg";
-
 /**
  * Textures
  */
 
+const loadingManager = new THREE.LoadingManager();
+
+loadingManager.onStart = () => {};
+loadingManager.onLoad = () => {};
+loadingManager.onProgress = () => {};
+loadingManager.onError = () => {};
+
 const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load(imageSource);
-texture.colorSpace = THREE.SRGBColorSpace;
+const colorTexture = textureLoader.load("/textures/door/color.jpg");
+const heightTexture = textureLoader.load("textures/door/height.jpg");
+const metalnessTexture = textureLoader.load("/textures/door/metalness.jpg");
+const normalTexture = textureLoader.load("/textures/door/normal.jpg");
+const roughTexture = textureLoader.load("/textures/door/roughness.jpg");
+const alphaTexture = textureLoader.load("/textures/door/alpha.jpg");
+const ambientTexture = textureLoader.load(
+  "/textures/door/ambientOcclusion.jpg"
+);
+
+colorTexture.colorSpace = THREE.SRGBColorSpace;
+colorTexture.generateMipmaps = false;
+colorTexture.minFilter = THREE.NearestFilter;
+colorTexture.magFilter = THREE.NearestFilter;
 
 /**
  * Object
  */
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ map: texture });
+const material = new THREE.MeshPhysicalMaterial({
+  map: colorTexture,
+  alphaMap: alphaTexture,
+  aoMap: ambientTexture,
+  normalMap: normalTexture,
+  metalnessMap: metalnessTexture,
+  roughnessMap: roughTexture,
+});
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
+
+const ambientLight = new THREE.DirectionalLight("white");
+ambientLight.position.set(1, -1, 1);
+scene.add(ambientLight);
+const hemiLight = new THREE.HemisphereLight("white", "grey");
+scene.add(hemiLight);
 
 /**
  * Sizes
