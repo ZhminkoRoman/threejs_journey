@@ -102,6 +102,7 @@ rgbeLoader.load("./textures/environmentMap/2k.hdr", (environmentMap) => {
 
 // const material = new THREE.MeshNormalMaterial();
 // material.map = doorColorTexture;
+
 // const material = new THREE.MeshMatcapMaterial();
 // material.matcap = matcapTexture;
 
