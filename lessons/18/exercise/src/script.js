@@ -14,30 +14,52 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
+const light = new THREE.PointLight("#fff", 3, 7);
+// light.position.set(2, 2, 2);
 /**
- * Test cube
+ * Void
  */
-// const cube = new THREE.Mesh(
-//     new THREE.BoxGeometry(1, 1, 1),
-//     new THREE.MeshBasicMaterial()
-// )
-// scene.add(cube)
+
+const textureLoader = new THREE.TextureLoader();
+
+// const matcapTexture = textureLoader.load("./textures/matcaps/55.png");
+// matcapTexture.colorSpace = THREE.SRGBColorSpace;
+
+const voidGroup = new THREE.Group();
+const sphereGeometry = new THREE.SphereGeometry(0.5, 64, 64);
+const sphereMaterial = new THREE.MeshStandardMaterial();
+// sphereMaterial.shininess = 10;
+// sphereMaterial.matcap = matcapTexture;
+// sphereMaterial.color = new THREE.Color("black");
+// sphereMaterial.emissive = new THREE.Color("black");
+// sphereMaterial.emissiveIntensity = 1;
+// sphereMaterial.shininess = 300;
+// sphereMaterial.specular = "#fff";
+// sphereMaterial.roughness = 0;
+// sphereMaterial.wireframe = true;
+const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+voidGroup.add(sphere);
+// voidGroup.add(light);
+// light.add(sphere);
+// sphere.add(light);
+scene.add(voidGroup);
+// scene.add(light);
 
 /**
  * Galaxy
  */
 
 const parameters = {};
-parameters.count = 100000;
-parameters.size = 0.01;
+parameters.count = 150000;
+parameters.size = 0.012;
 parameters.radius = 5;
 parameters.branches = 4;
-parameters.spin = 1;
-parameters.randomness = 0.2;
-parameters.randomnessPower = 3;
+parameters.spin = 2;
+parameters.randomness = 0.4;
+parameters.randomnessPower = 1.5;
 parameters.insideColor = "#ff6030";
 parameters.outsideColor = "#1b3984";
-parameters.spread = 0.6;
+parameters.spread = 1.4;
 
 let geometry = null;
 let material = null;
@@ -219,6 +241,8 @@ const clock = new THREE.Clock();
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  points.rotation.y = elapsedTime / 16;
 
   // Update controls
   controls.update();
