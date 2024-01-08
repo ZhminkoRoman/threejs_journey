@@ -38,7 +38,19 @@ const environmentMapTexture = cubeTextureLoader.load([
 
 // World
 const world = new CANNON.World();
+world.broadphase = new CANNON.SAPBroadphase(world);
+world.allowSleep = true;
 world.gravity.set(0, -9.82, 0);
+
+const hitSound = new Audio("/sounds/hit.mp3");
+const playHitSound = (collision) => {
+  const impactStrength = collision.contact.getImpactVelocityAlongNormal();
+  if (impactStrength > 1.5) {
+    hitSound.volume = Math.random();
+    hitSound.currentTime = 0;
+    hitSound.play();
+  }
+};
 
 // Materials
 const concreteMaterial = new CANNON.Material("concrete");
@@ -217,6 +229,7 @@ const createSphere = (radius, position) => {
     material: defaultMaterial,
   });
   body.position.copy(position);
+  body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
   // Save objects to update
@@ -250,6 +263,7 @@ const createBox = (size, position) => {
     material: defaultMaterial,
   });
   body.position.copy(position);
+  body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
   // Save objects to update
@@ -276,6 +290,17 @@ debugObject.createBox = () => {
   });
 };
 gui.add(debugObject, "createBox");
+
+debugObject.reset = () => {
+  for (const object of objectsToUpdate) {
+    object.body.removeEventListener("collide", playHitSound);
+    world.removeBodyEvent(object.body);
+
+    scene.remove(object.mesh);
+  }
+  objectsToUpdate.splice(0, objectsToUpdate.length);
+};
+gui.add(debugObject, "reset");
 
 /**
  * Animate
